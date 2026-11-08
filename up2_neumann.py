@@ -229,21 +229,3 @@ ax2.legend(loc='upper right', fontsize=9)
 plt.tight_layout()
 plt.savefig('UP2_relative_error.png', dpi=150, bbox_inches='tight')
 plt.show()
-
-# =============================================================================
-# TABLE OF BASAL ERRORS
-# =============================================================================
-print("\n" + "=" * 70)
-print("TABLE OF BASAL ERRORS & TIME STEPS (UP2)")
-print("=" * 70)
-print(f"{'nz':<6} {'Delta t':<15} {'Basal Error (%)':<20}")
-print("-" * 45)
-
-for nz in resolutions:
-    up2_err = results[nz]['basal_error_up2'] * 100
-    dt_val = results[nz]['dt']
-    print(f"{nz:<6} {dt_val:<15.6e} {up2_err:<20.6f}")
-
-print("\n" + "=" * 70)
-print("Simulations completed!")
-print("=" * 70)
