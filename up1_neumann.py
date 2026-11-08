@@ -6,7 +6,7 @@ from numpy import arctan, log, sqrt
 # PHYSICAL PARAMETERS AND DISCRETIZATION
 # =============================================================================
 L = 1.0  # dimensionless height
-T = 1000.0  # dimensionless time for steady state
+T = 1000.0  # dimensionless time for steady state as in Grève et al 2002
 
 # Dansgaard-Johnsen profile parameters
 z_star = 0.25
@@ -219,21 +219,3 @@ ax2.legend(loc='upper right', fontsize=9)
 plt.tight_layout()
 plt.savefig('UP1_relative_error.png', dpi=150, bbox_inches='tight')
 plt.show()
-
-# =============================================================================
-# TABLE OF BASAL ERRORS
-# =============================================================================
-print("\n" + "=" * 70)
-print("TABLE OF BASAL ERRORS & TIME STEPS")
-print("=" * 70)
-print(f"{'nz':<6} {'Delta t':<15} {'Basal Error (%)':<20}")
-print("-" * 45)
-
-for nz in resolutions:
-    up1_err = results[nz]['basal_error_up1'] * 100
-    dt_val = results[nz]['dt']
-    print(f"{nz:<6} {dt_val:<15.6e} {up1_err:<20.6f}")
-
-print("\n" + "=" * 70)
-print("Simulations completed!")
-print("=" * 70)
