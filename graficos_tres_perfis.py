@@ -10,7 +10,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # =============================================================================
-# CONFIGURAÇÃO DE FONTE (IDÊNTICA AO LATEX DO PDF)
+# CONFIGURAÇÃO DE FONTE
 # =============================================================================
 plt.rcParams.update({
     "text.usetex": False,
@@ -105,7 +105,7 @@ def dvz_DJLL(z_val):
                     dvz_LL(z_val))
 
 # =============================================================================
-# 4. NUMERICAL METHODS STEPS (Vectorized)
+# 4. NUMERICAL METHODS
 # =============================================================================
 def passo_UP1(A, dt, dvz_grid, vz_nodes, vz_half, vz_0):
     Q = 1.0 + A * dvz_grid
@@ -161,7 +161,7 @@ def passo_QUICK(A, dt, dvz_grid, vz_nodes, vz_half, vz_0):
 PASSOS = {"UP1": passo_UP1, "UP2": passo_UP2, "QUICK": passo_QUICK}
 
 # =============================================================================
-# 5. SOLVER (Von Neumann + temporal loop)
+# 5. SOLVER (with von Neumann)
 # =============================================================================
 def resolver(metodo, vz_func, dvz_func, fallback_up1=False):
     z = np.linspace(0.0, L, nz + 1)
@@ -203,7 +203,7 @@ def resolver(metodo, vz_func, dvz_func, fallback_up1=False):
     return A, z
 
 # =============================================================================
-# 6. RUNNING SIMULATIONS
+# 6. SIMULATIONS
 # =============================================================================
 METODOS = ["UP1", "UP2", "QUICK"]
 PERFIS = {
@@ -230,7 +230,7 @@ def compute_relative_error(A_num):
     return np.abs((A_num[1:-1] - A_edc_interp[1:-1]) / A_edc_interp[1:-1])
 
 # =============================================================================
-# 8. INDIVIDUAL PLOTS: AGE (3 methods + EDC)
+# 8. INDIVIDUAL PLOTS
 # =============================================================================
 cores = {"UP1": 'blue', "UP2": 'green', "QUICK": 'red'}
 estilos = {"UP1": '--', "UP2": '-.', "QUICK": '-'}
@@ -258,11 +258,10 @@ for nome, info in PERFIS.items():
     plt.show()
 
 # =============================================================================
-# 9. COMBINED PLOT: VELOCITY PROFILES + BASAL REGION ZOOM (SIDE BY SIDE)
+# 9. COMBINED PLOT
 # =============================================================================
 fig_comb, (ax_vel, ax_zoom) = plt.subplots(1, 2, figsize=(16, 8))
 
-# --- Subplot Esquerdo: Velocity Profiles ---
 ax_vel.plot(vz_DJ(z), z, lw=2.5, color='#1f77b4', linestyle='--', 
             marker='s', markevery=5, markersize=5, label=PERFIS["DJ"]["label"])
 ax_vel.plot(vz_LL(z), z, lw=2.5, color='#ff7f0e', linestyle='-.', 
@@ -279,7 +278,6 @@ ax_vel.grid(True, alpha=0.4)
 ax_vel.legend(loc='best', fontsize=14)
 ax_vel.set_ylim(0, 1.01)
 
-# --- Subplot Direito: Basal Region Zoom ---
 v_DJ_plot   = vz_DJ(z)
 v_LL_plot   = vz_LL(z)
 v_DJLL_plot = vz_DJLL(z)
@@ -298,14 +296,13 @@ ax_zoom.grid(True, which='both', alpha=0.3)
 ax_zoom.legend(loc='best', fontsize=14)
 ax_zoom.set_ylim(0, 0.3)
 
-# Salva a figura combinada
 plt.tight_layout()
 plt.savefig('figuras_tres_perfis/02_velocity_and_zoom.png', dpi=300, bbox_inches='tight')
 print("  [saved] figuras_tres_perfis/02_velocity_and_zoom.png")
 plt.show()
 
 # =============================================================================
-# 10. COMBINED PLOT: RELATIVE ERROR (All 3 profiles x 3 methods)
+# 10. COMBINED PLOT: RELATIVE ERROR
 # =============================================================================
 fig_err, ax_err = plt.subplots(figsize=(10, 10))
 z_inner = z[1:-1]
@@ -345,28 +342,6 @@ plt.tight_layout()
 plt.savefig('figuras_tres_perfis/03_relative_error_all.png', dpi=300, bbox_inches='tight')
 print("  [saved] figuras_tres_perfis/03_relative_error_all.png")
 plt.show()
-
-# =============================================================================
-# 11. DIAGNOSTIC 1: MATHEMATICAL DIFFERENCE BETWEEN PROFILES
-# =============================================================================
-fig_diff, ax_diff = plt.subplots(figsize=(8, 6))
-
-ax_diff.plot(v_DJLL_plot - v_DJ_plot, z, label='Hybrid - DJ', color='purple', lw=2)
-ax_diff.plot(v_DJLL_plot - v_LL_plot, z, label='Hybrid - LL', color='brown', lw=2)
-ax_diff.plot(v_LL_plot - v_DJ_plot, z, label='LL - DJ', color='teal', lw=2, linestyle='--')
-
-ax_diff.axvline(x=0, color='black', linestyle='-', alpha=0.5)
-ax_diff.axhline(y=Z_STAR_HIB, color='red', linestyle='--', label='Transition z=0.2')
-
-ax_diff.set_xlabel('Velocity Difference (\(\Delta v_z\))', fontsize=16)
-ax_diff.set_ylabel('Normalized Height z', fontsize=16)
-ax_diff.set_title('Mathematical Difference Between Profiles', fontsize=18)
-ax_diff.tick_params(axis='both', labelsize=14)
-ax_diff.grid(True, alpha=0.3)
-ax_diff.legend(loc='best', fontsize=14)
-ax_diff.set_ylim(0, 1.01)
-
-plt.tight_layout()
 plt.savefig('figuras_tres_perfis/04_velocity_difference.png', dpi=300, bbox_inches='tight')
 print("  [saved] figuras_tres_perfis/04_velocity_difference.png")
 plt.show()
